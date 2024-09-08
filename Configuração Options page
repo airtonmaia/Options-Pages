@@ -1,0 +1,46 @@
+<?php
+
+/* Esse código permite que através do options page 
+seja possível fazer um update nos campos padrão do WordPress */
+
+function update_site_info_from_options_page() {
+
+    // Obter o array dos metafields do JetEngine
+    $options = get_option('meu-site');
+
+    // Definir os nomes dos metafields
+    $logo_field = 'logo_site';
+    $favicon_field = 'favicon_site';
+    $title_field = '_titulo_do_site';
+    $description_field = '_descricao_do_site';    
+    
+    
+    // Verifica se $options é um array antes de prosseguir
+    if( is_array($options) ) {
+        // Acessar os valores dos metafields usando as variáveis definidas
+        $logo = isset($options[$logo_field]) ? $options[$logo_field] : null;
+        $favicon = isset($options[$favicon_field]) ? $options[$favicon_field] : null;
+        $title = isset($options[$title_field]) ? $options[$title_field] : null;
+        $description = isset($options[$description_field]) ? $options[$description_field] : null;
+
+        // Atualizar o logo e o favicon
+        if( $logo ) {
+            set_theme_mod( 'custom_logo', attachment_url_to_postid( $logo ) );
+        }
+
+        if( $favicon ) {
+            update_option( 'site_icon', attachment_url_to_postid( $favicon ) );
+        }
+
+        // Atualizar o título e a descrição do site
+        if( $title ) {
+            update_option( 'blogname', $title );
+        }
+
+        if( $description ) {
+            update_option( 'blogdescription', $description );
+        }
+    }
+}
+add_action( 'updated_option', 'update_site_info_from_options_page' );  
+// Este hook é acionado sempre que uma opção é atualizada
